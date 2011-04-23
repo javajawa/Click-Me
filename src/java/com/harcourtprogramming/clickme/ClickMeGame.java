@@ -1,11 +1,7 @@
 package com.harcourtprogramming.clickme;
 
 import com.sun.faces.util.LRUMap;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeSet;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -48,9 +44,13 @@ final class ClickMeGame
 		return instance;
 	}
 	
-	protected ClickMeGame()
+	ClickMeGame()
 	{
-		for (int i = 0; i < historyQuanta; i++)	newEntry();
+		for (currEntry = 0; currEntry < historyQuanta;)
+		{
+			++currEntry;
+			history.put(currEntry, new HashMap<String, Integer>());
+		}
 		
 		scheduler.scheduleAtFixedRate(new TimerDelegate(), timeQuantum, timeQuantum, TimeUnit.MINUTES);
 	}

@@ -62,6 +62,12 @@ public class ReadOnlyScoreTable extends ScoreTable
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
+	public ScoreTable readOnlyCopy()
+	{
+		return this;
+	}
+
 	ReadOnlyScoreTable(ScoreTable s)
 	{
 		this.scores = s.scores;

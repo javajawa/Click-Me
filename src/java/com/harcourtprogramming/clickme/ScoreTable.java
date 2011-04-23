@@ -308,12 +308,12 @@ public class ScoreTable implements SetCompatibleMap<String,Integer>, SortedSet<M
 	
 	public ScoreTable readOnlyCopy()
 	{
-		return new ReadOnlyScoreTable(this);
+		if (ro_copy == null) ro_copy = new ReadOnlyScoreTable(this);
+		return ro_copy;
 	}
 
 	public ScoreTable()
 	{
-		ro_copy = new ReadOnlyScoreTable(this);
 	}
 	
 }
