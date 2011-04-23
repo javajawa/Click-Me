@@ -37,7 +37,7 @@ final class ClickMeGame
 	 */
 	@SuppressWarnings("unchecked")
 	private LRUMap<Integer,HashMap<String, Integer>> history = new LRUMap<Integer, HashMap<String, Integer>>(historyQuanta);
-	ScoreTable scores = new ScoreTable();
+	private ScoreTable scores = new ScoreTable();
 	
 	public static ClickMeGame getInstance()
 	{

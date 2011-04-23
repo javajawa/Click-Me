@@ -8,9 +8,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.SortedSet;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -20,10 +18,6 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Benedict
  */
-@WebServlet(name = "GameServlet", urlPatterns =
-{
-	"/play"
-})
 public final class ScoreServlet extends HttpServlet
 {
 	private static ClickMeGame game;
