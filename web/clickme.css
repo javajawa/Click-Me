@@ -21,26 +21,35 @@ body
 
 #clickme
 {
+	width: 150px;
+	height: 150px;
+
 	margin: 0 auto;
 	padding: 10px;
 	
-	width: 150px;
-	height: 150px;
-	border-width: 1px;
-	border-radius: 75px;
-	text-align: center;
+	border-radius: 150px;
 	
-	background-color: orangered;
-	color: #228;
 	cursor: pointer;
 	
 	-webkit-user-select: none;
 	-moz-user-select: none;
+
+	background: #1a82f7;
+	background: -moz-radial-gradient(circle, #1a82f7, #2F2727);
+	background: -webkit-gradient(radial, center center, 0, center center, 460, from(#1a82f7), to(#2F2727));
+	background: -webkit-radial-gradient(circle, #1A82F7, #2F2727);
+	background: radial-gradient(circle, #1A82F7, #2F2727);
+
+	box-shadow: 0 0 100px aqua;
 }
 
 #clickme:active
 {
-	background-color: orange;
+	background: #1af782;
+	background: -moz-radial-gradient(circle, #1af782, #2F2727);
+	background: -webkit-gradient(radial, center center, 0, center center, 460, from(#1af783), to(#2F2727));
+	background: -webkit-radial-gradient(circle, #1AF782, #2F2727);
+	background: radial-gradient(circle, #1AF782, #2F2727);
 }
 
 table

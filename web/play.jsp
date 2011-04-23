@@ -1,4 +1,4 @@
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page contentType="application/xhtml+xml" pageEncoding="UTF-8"%>
 <%
 
 	if (request.getParameter("player") != null)
@@ -64,7 +64,7 @@
 	</head>
 	<body style="padding-top: 100px;">
 		<div style="width: 50%; float: right; text-align: center;">
-			<div id="clickme" onmouseup="buttonClicked();"><h1>CLICK<br />ME!</h1></div>
+			<div id="clickme" onmouseup="buttonClicked();"></div>
 		</div>
 		<div style="width: 50%; text-align: center;">
 			<div id="scoreboard">
