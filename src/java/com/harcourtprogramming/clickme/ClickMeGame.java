@@ -41,6 +41,7 @@ final class ClickMeGame
 	 */
 	@SuppressWarnings("unchecked")
 	private LRUMap<Integer,HashMap<String, Integer>> history = new LRUMap<Integer, HashMap<String, Integer>>(historyQuanta);
+	ScoreTable scores = new ScoreTable();
 	
 	public static ClickMeGame getInstance()
 	{
@@ -65,6 +66,7 @@ final class ClickMeGame
 	{
 		++currEntry;
 		history.put(currEntry, new HashMap<String, Integer>());
+		scores.subtractAll(history.get(currEntry - 1).entrySet());
 	}
 	
 	public synchronized void addScore(String player, int score)
@@ -80,22 +82,12 @@ final class ClickMeGame
 		{
 			latestScores.put(player, score);
 		}
+
+		scores.add(player, score);
 	}
 	
-	public synchronized SortedSet<Map.Entry<String, Integer>> getScores()
+	public synchronized ScoreTable getScores()
 	{
-		final ValueComparator<Integer> bvc = new ValueComparator<Integer>();
-		
-		SortedSet<Map.Entry<String, Integer>> scores = new TreeSet<Map.Entry<String, Integer>>(bvc);
-		scores.addAll(history.get(currEntry).entrySet());
-		return scores;
+		return scores.readOnlyCopy();
 	}
-	
-	private static final class ValueComparator<V extends Comparable<? super V>>
-                                     implements Comparator<Map.Entry<?, V>> {
-		@Override
-    public int compare(Map.Entry<?, V> o1, Map.Entry<?, V> o2) {
-        return o2.getValue().compareTo(o1.getValue());
-    }
-}
 }

@@ -8,9 +8,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Map;
 import java.util.SortedSet;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -29,21 +26,7 @@ public final class ScoreServlet extends HttpServlet
 {
 	private static ClickMeGame game;
 	private static SortedSet<Map.Entry<String, Integer>> lastestScores;
-	private ScheduledExecutorService scheduler =  Executors.newScheduledThreadPool(1);
 		
-	private class ScoreChecker implements Runnable
-	{
-		public ScoreChecker()
-		{
-		}
-
-		@Override
-		public void run()
-		{
-			ScoreServlet.lastestScores = ScoreServlet.game.getScores();
-		}
-	}
-	
 	/** 
 	 * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
 	 * @param request servlet request
@@ -80,7 +63,6 @@ public final class ScoreServlet extends HttpServlet
 	{
 		game = ClickMeGame.getInstance();
 		lastestScores = game.getScores();
-		scheduler.scheduleAtFixedRate(new ScoreChecker(), 2, 2, TimeUnit.SECONDS);
 	}
 	
 	// <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
