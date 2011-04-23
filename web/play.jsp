@@ -30,7 +30,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 	<head>
 		<link rel="stylesheet" type="text/stylesheet" href="clickme.css" />
-		<script type="text/javascript" src="prototype/src/prototype/prototype.js"></script>
+		<script type="text/javascript" src="prototype/prototype.js"></script>
 		<script type="text/javascript">
 			var score = 0;
 			var totalScore = 0;
