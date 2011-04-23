@@ -1,3 +1,23 @@
+html
+{
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-o-user-select: none;
+	user-select: none;
+}
+
+
+body
+{
+	background-color: #121;
+	background-image: url('background.png');
+	background-attachment: fixed;
+	background-repeat: no-repeat;
+	background-position: right top;
+	
+	color: white;
+}
 
 #clickme
 {
@@ -9,7 +29,9 @@
 	border-width: 1px;
 	border-radius: 75px;
 	text-align: center;
+	
 	background-color: orangered;
+	color: #228;
 	cursor: pointer;
 	
 	-webkit-user-select: none;
@@ -26,10 +48,50 @@ table
 	font-size: 16pt;
 	width: auto;
 	margin: 0 auto;
+	border-collapse: collapse;
+	border: 2px solid grey;
+	width: 66%;
+	color: black;
+}
+
+td.score
+{
+	width: 50px;
+	text-align: right;
 }
 
 td
 {
 	padding: 2px;
 	text-align: left;
+}
+
+td:first-child
+{
+	padding-left: 35px;
+}
+
+td:last-child
+{
+	padding-right: 35px;
+}
+
+tr>td
+{
+	background: rgba(255, 255, 255, 0.5);
+}
+
+tr:nth-child(2n)>td
+{
+	background: rgba(200, 200, 200, 0.5);
+}
+
+td.my-score
+{
+	background-color: rgba(255,128,32,0.5) !important;
+}
+
+td.not-public
+{
+	border-top: 1px grey solid;
 }
