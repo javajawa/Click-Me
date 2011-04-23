@@ -65,8 +65,7 @@ final class ClickMeGame
 	final synchronized void newEntry()
 	{
 		++currEntry;
-		history.put(currEntry, new HashMap<String, Integer>());
-		scores.subtractAll(history.get(currEntry - 1).entrySet());
+		scores.subtractAll(history.put(currEntry, new HashMap<String, Integer>()).entrySet());
 	}
 	
 	public synchronized void addScore(String player, int score)
