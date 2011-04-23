@@ -27,8 +27,8 @@ final class ClickMeGame
 	
 	private final static ClickMeGame instance = new ClickMeGame();
 	
-	private static final int timeQuantum = 30;
-	private static final int historyQuanta = 24;
+	private static final int timeQuantum = 15;
+	private static final int historyQuanta = 96;
 	
 	private int currEntry = 0;
 	private ScheduledExecutorService scheduler =  Executors.newScheduledThreadPool(1);
