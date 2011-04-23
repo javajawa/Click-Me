@@ -1,0 +1,35 @@
+
+#clickme
+{
+	margin: 0 auto;
+	padding: 10px;
+	
+	width: 150px;
+	height: 150px;
+	border-width: 1px;
+	border-radius: 75px;
+	text-align: center;
+	background-color: orangered;
+	cursor: pointer;
+	
+	-webkit-user-select: none;
+	-moz-user-select: none;
+}
+
+#clickme:active
+{
+	background-color: orange;
+}
+
+table
+{
+	font-size: 16pt;
+	width: auto;
+	margin: 0 auto;
+}
+
+td
+{
+	padding: 2px;
+	text-align: left;
+}
