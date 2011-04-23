@@ -16,17 +16,18 @@ import java.util.TreeSet;
  */
 public class ScoreTable implements SetCompatibleMap<String,Integer>, SortedSet<Map.Entry<String,Integer>>
 {
-	protected TreeSet<Map.Entry<String,Integer>> scores = new TreeSet<Map.Entry<String, Integer>>(
-					new ScoreComparator());
+	protected ScoreComparator<String> comparator = new ScoreComparator<String>();
+	protected TreeSet<Map.Entry<String,Integer>> scores = new TreeSet<Map.Entry<String, Integer>>(comparator);
 	protected Map<String,Map.Entry<String,Integer>> lookup = new HashMap<String, Map.Entry<String, Integer>>();
 	private ReadOnlyScoreTable ro_copy;
 
-	private static final class ScoreComparator implements Comparator<Map.Entry<?, Integer>>
+	private static final class ScoreComparator<K extends Comparable<K>> implements Comparator<Map.Entry<K, Integer>>
 	{
 		@Override
-    public int compare(Map.Entry<?, Integer> o1, Map.Entry<?, Integer> o2)
+    public int compare(Map.Entry<K, Integer> o1, Map.Entry<K, Integer> o2)
 		{
-        return o2.getValue().compareTo(o1.getValue());
+			int vcompare = o2.getValue().compareTo(o1.getValue());
+			return vcompare == 0 ? (o1.getKey().compareTo(o2.getKey())) : vcompare;
     }
 	}
 	
@@ -65,13 +66,13 @@ public class ScoreTable implements SetCompatibleMap<String,Integer>, SortedSet<M
 	}
 
 	@Override
-	public boolean containsKey(Object key)
+	public synchronized boolean containsKey(Object key)
 	{
 		return lookup.containsKey((String)key);
 	}
 
 	@Override
-	public void clear()
+	public synchronized void clear()
 	{
 		scores.clear();
 		lookup.clear();
@@ -80,48 +81,47 @@ public class ScoreTable implements SetCompatibleMap<String,Integer>, SortedSet<M
 	@Override
 	public Comparator<? super Map.Entry<String, Integer>> comparator()
 	{
-		return scores.comparator();
+		return comparator;
 	}
 	
 	@Override
-	public Integer get(Object key)
+	public synchronized Integer get(Object key)
 	{
-		lookup.get((String)key).getValue();
-		throw new UnsupportedOperationException("Not supported yet.");
+		return lookup.get((String)key).getValue();
 	}
 
 	@Override
-	public Map.Entry<String, Integer> first()
+	public synchronized Map.Entry<String, Integer> first()
 	{
 		return scores.first();
 	}
 
 	@Override
-	public boolean isEmpty()
+	public synchronized boolean isEmpty()
 	{
 		return scores.isEmpty();
 	}
 
 	@Override
-	public Map.Entry<String, Integer> last()
+	public synchronized Map.Entry<String, Integer> last()
 	{
 		return scores.last();
 	}
 
 	@Override
-	public Set<String> keySet()
+	public synchronized Set<String> keySet()
 	{
 		return Collections.unmodifiableSet(lookup.keySet());
 	}
 
 	@Override
-	public Set<Map.Entry<String, Integer>> entrySet()
+	public synchronized Set<Map.Entry<String, Integer>> entrySet()
 	{
 		return Collections.unmodifiableSet(scores);
 	}
 
 	@Override
-	public Integer put(String key, Integer value)
+	public synchronized Integer put(String key, Integer value)
 	{
 		Map.Entry<String,Integer> r = lookup.get(key);
 		if (r==null)
@@ -140,19 +140,19 @@ public class ScoreTable implements SetCompatibleMap<String,Integer>, SortedSet<M
 	}
 
 	@Override
-	public Iterator<Map.Entry<String, Integer>> iterator()
+	public synchronized Iterator<Map.Entry<String, Integer>> iterator()
 	{
 		return scores.iterator();
 	}
 
 	@Override
-	public SortedSet<Map.Entry<String, Integer>> headSet(Map.Entry<String, Integer> toElement)
+	public synchronized SortedSet<Map.Entry<String, Integer>> headSet(Map.Entry<String, Integer> toElement)
 	{
 		return scores.headSet(toElement);
 	}
 
 	@Override
-	public boolean add(Map.Entry<String, Integer> e)
+	public synchronized boolean add(Map.Entry<String, Integer> e)
 	{
 		Map.Entry<String,Integer> r = lookup.get(e.getKey());
 		
@@ -164,12 +164,14 @@ public class ScoreTable implements SetCompatibleMap<String,Integer>, SortedSet<M
 		}
 		else
 		{
+			scores.remove(r);	
 			r.setValue(r.getValue() + e.getValue());
+			scores.add(r);
 			return true;
 		}
 	}
 
-	public boolean add(String player, Integer addition)
+	public synchronized boolean add(String player, Integer addition)
 	{
 		Map.Entry<String,Integer> r = lookup.get(player);
 		
@@ -178,16 +180,17 @@ public class ScoreTable implements SetCompatibleMap<String,Integer>, SortedSet<M
 			r = new ScoreTable.Entry<String, Integer>(player, addition);
 			lookup.put(player, r);
 			scores.add(r);
-			return true;
 		}
 		else
 		{
+			scores.remove(r);	
 			r.setValue(r.getValue() + addition);
-			return true;
+			scores.add(r);
 		}
+		return true;
 	}	
 	
-	public boolean subtract(Map.Entry<String, Integer> e)
+	public synchronized boolean subtract(Map.Entry<String, Integer> e)
 	{
 		Map.Entry<String,Integer> r = lookup.get(e.getKey());
 		
@@ -200,13 +203,15 @@ public class ScoreTable implements SetCompatibleMap<String,Integer>, SortedSet<M
 		}
 		else
 		{
+			scores.remove(r);	
 			r.setValue(r.getValue() - e.getValue());
+			scores.add(r);
 			return true;
 		}
 	}
 	
 	@Override
-	public void putAll(Map<? extends String, ? extends Integer> m)
+	public synchronized void putAll(Map<? extends String, ? extends Integer> m)
 	{
 		for (String player : m.keySet())
 		{
@@ -227,20 +232,20 @@ public class ScoreTable implements SetCompatibleMap<String,Integer>, SortedSet<M
 	}
 
 	@Override
-	public SortedSet<Map.Entry<String, Integer>> subSet(Map.Entry<String, Integer> fromElement,
+	public synchronized SortedSet<Map.Entry<String, Integer>> subSet(Map.Entry<String, Integer> fromElement,
 					Map.Entry<String, Integer> toElement)
 	{
 		return scores.subSet(fromElement, toElement);
 	}
 
 	@Override
-	public SortedSet<Map.Entry<String, Integer>> tailSet(Map.Entry<String, Integer> fromElement)
+	public synchronized SortedSet<Map.Entry<String, Integer>> tailSet(Map.Entry<String, Integer> fromElement)
 	{
 		return scores.tailSet(fromElement);
 	}
 
 	@Override
-	public int size()
+	public synchronized int size()
 	{
 		return scores.size();
 	}
@@ -288,7 +293,7 @@ public class ScoreTable implements SetCompatibleMap<String,Integer>, SortedSet<M
 	}
 
 	@Override
-	public boolean addAll(Collection<? extends Map.Entry<String, Integer>> c)
+	public synchronized  boolean addAll(Collection<? extends Map.Entry<String, Integer>> c)
 	{
 		for (Map.Entry<String, Integer> entry : c)
 		{
@@ -297,7 +302,7 @@ public class ScoreTable implements SetCompatibleMap<String,Integer>, SortedSet<M
 		return true;
 	}
 	
-	public boolean subtractAll(Collection<? extends Map.Entry<String, Integer>> c)
+	public synchronized boolean subtractAll(Collection<? extends Map.Entry<String, Integer>> c)
 	{
 		for (Map.Entry<String, Integer> entry : c)
 		{
@@ -314,6 +319,7 @@ public class ScoreTable implements SetCompatibleMap<String,Integer>, SortedSet<M
 
 	public ScoreTable()
 	{
+		// Nothing to see here. Move along, citizen.
 	}
 	
 }

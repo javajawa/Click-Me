@@ -6,10 +6,12 @@ package com.harcourtprogramming.clickme;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.SortedSet;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,7 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 public final class ScoreServlet extends HttpServlet
 {
 	private static ClickMeGame game;
-	private static SortedSet<Map.Entry<String, Integer>> lastestScores;
+	private static ScoreTable lastestScores;
 		
 	/** 
 	 * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -38,19 +40,57 @@ public final class ScoreServlet extends HttpServlet
 					HttpServletResponse response)
 					throws ServletException, IOException
 	{
+		
+		Cookie[] cookies = request.getCookies();
+		String player = null;
+		for (Cookie cookie : cookies)
+		{
+			if (cookie.getName().equals("click-me-player"))
+			{
+				player = cookie.getValue();
+			}
+		}
+		
 		response.setContentType("text/html;charset=UTF-8");
 		PrintWriter out = response.getWriter();
+		
 		try
 		{
+			boolean haveSelf = false;
+			int rows = 10;
+			
+			out.write("<h1>Latest Scores</h1>");
 			out.write("<table>");
-			out.write("<tr><h1>Latest Scores</h1></tr>");
-			for (Map.Entry<String, Integer> score : lastestScores)
+			for (Iterator<Map.Entry<String, Integer>> it = lastestScores.iterator(); it.hasNext() && rows > 0; rows--)
 			{
+				Map.Entry<String, Integer> score = it.next();
+				
+				
 				out.write("<tr>");
-				out.write("<td>" +  score.getKey()  + "</td>");
-				out.write("<td>" + score.getValue() + "</td>");
+				
+				if (score.getKey().equals(player))
+				{
+					out.write("<td class=\"my-score\">" +  score.getKey()  + "</td>");
+					out.write("<td class=\"my-score score\">" + score.getValue() + "</td>");
+					haveSelf = true;
+				}
+				else
+				{
+					out.write("<td>" +  score.getKey()  + "</td>");
+					out.write("<td class=\"score\">" + score.getValue() + "</td>");
+				}
+				
 				out.write("</tr>");
 			}
+			
+			if (!haveSelf && lastestScores.containsKey(player))
+			{
+				out.write("<tr>");
+				out.write("<td class=\"my-score not-public\">" + player + "</td>");
+				out.write("<td class=\"score my-score not-public\">" + lastestScores.get(player) + "</td>");
+				out.write("</tr>");
+			}
+			
 			out.write("</table>");
 		}
 		finally
